@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contador de Patos</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 20px;
+        background-color: #e4e9fc; /* Color de fondo */
+      }
+
+      #title {
+        color: #ff9127;
+      }
+
+      #btnPato {
+        background: url("https://img.freepik.com/vector-premium/ilustracion-vector-pato-goma-dibujos-animados-lindo_773815-129.jpg");
+        background-size: cover;
+        width: 80px;
+        height: 80px;
+        border: none;
+        cursor: pointer;
+        border-radius: 50%;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 id="title">¿Serás capaz de encontrarlos a todos?</h1>
+    <h1>Quedan <span id="contador">#</span><span> patos</span></h1>
+    <button id="btnPato" onclick="sumDuck()"></button>
+    <!-- Agrega estos scripts en tu archivo HTML antes de tu script principal -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <script>
+      // Configura tu información de Firebase
+      var firebaseConfig = {
+        apiKey: "AIzaSyCdTvh9QzFbpB_Fw2HJdXdrQyiEi4vdMGQ",
+        authDomain: "ducktracker-bcde0.firebaseapp.com",
+        projectId: "ducktracker-bcde0",
+        storageBucket: "ducktracker-bcde0.appspot.com",
+        messagingSenderId: "670768815782",
+        appId: "1:670768815782:web:811b092401bae49c561e67",
+      };
+
+      // Inicializa Firebase
+      firebase.initializeApp(firebaseConfig);
+
+      // Accede a Firestore
+      var db = firebase.firestore();
+      var obtenerDatos = async function () {
+        try {
+          var querySnapshot = await db.collection("ducks").limit(1).get();
+          querySnapshot.forEach(function (doc) {
+            // Obtener el valor actual
+            var valorActual = doc.data().counter;
+            document.getElementById("contador").innerText = valorActual;
+          });
+        } catch (error) {
+          console.error("Error al leer datos:", error);
+        }
+      };
+      obtenerDatos();
+      var sumDuck = async function () {
+        try {
+          var querySnapshot = await db.collection("ducks").limit(1).get();
+          querySnapshot.forEach(function (doc) {
+            // Obtener el valor actual
+            var valorActual = doc.data().counter;
+            var sumValue = valorActual + 1;
+            db.collection("ducks")
+              .doc(doc.id)
+              .update({ counter: sumValue })
+              .then(function () {
+                console.log("Valor actualizado a:", sumValue);
+                document.getElementById("contador").innerText = sumValue;
+              })
+              .catch(function (error) {
+                console.error("Error al actualizar el valor:", error);
+              });
+          });
+        } catch (error) {
+          console.error("Error al leer datos:", error);
+        }
+      };
+    </script>
+  </body>
+</html>
